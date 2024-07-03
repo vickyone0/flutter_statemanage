@@ -23,6 +23,7 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
+  PageController pageController = new PageController(initialPage: 0);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +36,8 @@ class _WelcomeState extends State<Welcome> {
             alignment: Alignment.topCenter,
             children: [
               PageView(
-                onPageChanged: (index){
+                controller: pageController,
+                onPageChanged: (index) {
                   state.page = index;
                   BlocProvider.of<WelcomeBloc>(context).add(WelcomeEvent());
                 },
@@ -92,7 +94,7 @@ class _WelcomeState extends State<Welcome> {
         SizedBox(
           width: 345.w,
           height: 345.w,
-          child: Image.asset(imagePath,fit: BoxFit.cover),
+          child: Image.asset(imagePath, fit: BoxFit.cover),
         ),
         Container(
           child: Text(
@@ -113,32 +115,44 @@ class _WelcomeState extends State<Welcome> {
                 fontWeight: FontWeight.normal),
           ),
         ),
-        Container(
-            width: 325.w,
-            height: 50.h,
-            margin: EdgeInsets.only(top: 100.h, left: 25.w, right: 25.w),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.all(Radius.circular(15.w)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: Offset(0, 1), // changes position of shadow
+        GestureDetector(
+            child: Container(
+                width: 325.w,
+                height: 50.h,
+                margin: EdgeInsets.only(top: 100.h, left: 25.w, right: 25.w),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.all(Radius.circular(15.w)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 1), // changes position of shadow
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Center(
-                child: Text(
-              buttonName,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.normal,
-                fontSize: 16.sp,
-              ),
-            )))
+                child: Center(
+                    child: Text(
+                  buttonName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16.sp,
+                  ),
+                ))),
+            onTap: () {
+              if (index < 3) {
+                pageController.animateToPage(
+                  index,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.ease,
+                );
+              } else {
+                Navigator.of(context).pushNamedAndRemoveUntil("signIn", (route)=> false);
+              }
+            })
       ],
     );
   }
